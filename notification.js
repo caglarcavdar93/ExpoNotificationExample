@@ -1,6 +1,5 @@
 import * as Notifications from "expo-notifications";
 import React, { useState, useEffect, useRef } from "react";
-import { Platform } from "react-native";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -11,16 +10,11 @@ Notifications.setNotificationHandler({
 });
 
 export default function Notification() {
-  const [expoPushToken, setExpoPushToken] = useState("");
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then((token) =>
-      setExpoPushToken(token)
-    );
-
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
         setNotification(notification);
@@ -40,4 +34,14 @@ export default function Notification() {
   }, []);
 
   return null;
+}
+export async function schedulePushNotification() {
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: "You've got mail! 📬",
+      body: "Here is the notification body",
+      data: { data: "goes here" },
+    },
+    trigger: { seconds: 2 },
+  });
 }
